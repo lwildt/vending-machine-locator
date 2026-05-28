@@ -45,6 +45,27 @@ body,
   font-weight: 600;
 }
 
+.topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topbar-controls button {
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.topbar-controls button[aria-pressed="true"] {
+  background: #34d399;
+  color: white;
+}
+
 main {
   position: relative;
   flex: 1;

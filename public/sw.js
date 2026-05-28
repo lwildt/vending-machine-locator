@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vml-app-shell-v1';
+const CACHE_NAME = 'vml-app-shell-v2';
 const APP_SHELL = ['.', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -24,6 +24,22 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // For navigations, prefer fresh HTML to avoid stale app code after deployments.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse.ok) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(request).then((cachedResponse) => cachedResponse || caches.match('./index.html'))),
+    );
     return;
   }
 
